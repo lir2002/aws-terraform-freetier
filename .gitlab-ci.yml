@@ -34,14 +34,9 @@ validate:
   stage: validate
   script:
     - terraform validate
-  tags:
-    - docker
-    - kubernetes
 
 plan:
   stage: build
-  tags:
-    - kubernetes
   script:
     - terraform plan -out=$PLAN
     - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
@@ -55,8 +50,6 @@ plan:
 # action.
 apply:
   stage: deploy
-  tags:
-    - kubernetes
   environment:
     name: production
   script:

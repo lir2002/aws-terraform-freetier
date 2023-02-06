@@ -32,21 +32,19 @@ stages:
 
 validate:
   stage: validate
-  when: on_failure
   script:
     - terraform validate
 
 plan:
   stage: build
-  when: on_failure
   script:
     - terraform plan -out=$PLAN
     - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
-#  artifacts:
-#    paths:
-#      - $PLAN
-#    reports:
-#      terraform: $JSON_PLAN_FILE
+  artifacts:
+    paths:
+      - $PLAN
+    reports:
+      terraform: $JSON_PLAN_FILE
 
 # Separate apply job for manual launching Terraform as it can be destructive
 # action.
@@ -55,7 +53,7 @@ apply:
   environment:
     name: production
   script:
-    - terraform apply -input=false -auto-approve $DESTROY
+    - terraform apply -input=false -auto-approve $DESTROY $PLAN
     - git config user.email "$GITLAB_USER_EMAIL"
     - git config user.name "$GITLAB_USER_NAME"
     - git checkout $CI_COMMIT_BRANCH
@@ -65,9 +63,9 @@ apply:
     - git push https://WRITE_GIT_TOKEN:${WRITE_GIT_TOKEN}@git.epam.com/ethan_li/aws-terraform-freetier.git $CI_COMMIT_BRANCH
   dependencies:
     - plan
-#  when: manual
-#  only:
-#    - dev
+  when: manual
+  only:
+    - dev
   artifacts:
     name: Terraform-State
     paths:

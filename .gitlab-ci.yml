@@ -24,6 +24,12 @@ before_script:
   - terraform --version
   - terraform init
 
+.default_rules:
+  rules:
+    - if: $ENV_TAG =~ /DIT/
+      when: never
+    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+
 stages:
   - recognize
   - validate
@@ -52,6 +58,7 @@ validate:
   rules:
     - if: $ENV_TAG =~ /DIT/
       when: never
+    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
 
 plan:
   stage: build
@@ -64,6 +71,8 @@ plan:
     reports:
       terraform: $ENV_TAG/$JSON_PLAN_FILE
   rules:
+    - if: $ENV_TAG =~ /DIT/
+      when: never
     - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
 
 # Separate apply job for manual launching Terraform as it can be destructive
@@ -77,6 +86,8 @@ apply:
   dependencies:
     - plan
   rules:
+    - if: $ENV_TAG =~ /DIT/
+      when: never
     - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   artifacts:
     name: terraform-state-$CI_JOB_ID
@@ -89,6 +100,8 @@ state:
   needs:
     - job: apply
   rules:
+    - if: $ENV_TAG =~ /DIT/
+      when: never
     - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   before_script:
     - echo start git commit state changes

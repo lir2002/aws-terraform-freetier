@@ -32,5 +32,5 @@ resource "aws_instance" "app_server" {
 
   subnet_id = "subnet-0a7a150f50e916932"
 
-  private_ip = "172.31.2.6"
+  private_ip = "172.31.2.7"
 }

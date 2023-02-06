@@ -40,9 +40,9 @@ plan:
   script:
     - terraform plan -out=$PLAN
     - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
-  artifacts:
-    paths:
-      - $PLAN
+#  artifacts:
+#    paths:
+#      - $PLAN
 #    reports:
 #      terraform: $JSON_PLAN_FILE
 
@@ -53,7 +53,7 @@ apply:
   environment:
     name: production
   script:
-    - terraform apply -input=false -auto-approve
+    - terraform apply -input=false -auto-approve $DESTROY
   dependencies:
     - plan
   when: manual

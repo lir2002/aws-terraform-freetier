@@ -39,7 +39,7 @@ validate:
 plan:
   stage: build
   script:
-    - terraform plan -out=$PLAN
+    - terraform plan -out=$PLAN $DESTROY
     - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
   artifacts:
     paths:

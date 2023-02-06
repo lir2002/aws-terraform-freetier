@@ -1,7 +1,7 @@
 /.idea/
 
-/.terraform/
+.terraform/
 
-/terraform.tfstate.backup
+SIT/terraform.tfstate.backup
 
-/PLAN.tfplan
+SIT/PLAN.tfplan

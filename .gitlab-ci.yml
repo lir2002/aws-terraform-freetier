@@ -25,29 +25,45 @@ before_script:
   - terraform init
 
 stages:
+  - recognize
   - validate
   - build
   - test
   - deploy
   - commit
 
+checkEnv:
+  stage: recognize
+  before_script: []
+  script:
+    - export EVN_TAG=DIT
+    - if [ $CI_COMMIT_REF_NAME = "develop" ] ;then ENV_TAG=SIT; fi
+    - if [[ $CI_COMMIT_REF_NAME ==  "release"* ]]; then ENV_TAG=UAT; fi
+    - if [ $CI_COMMIT_REF_NAME = "master" ]; then ENV_TAG=PROD; fi
+    - echo "ENV_TAG=$EVN_TAG" > build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+
 validate:
   stage: validate
   script:
-    - terraform validate
+    - terraform -chdir=$ENV_TAG validate
+  rules:
+    - if: $ENV_TAG =~ /DIT/ && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
 
 plan:
   stage: build
   script:
-    - terraform plan -out=$PLAN $DESTROY
-    - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
+    - terraform -chdir=$ENV_TAG plan -out=$PLAN $DESTROY
+    - terraform -chdir=$ENV_TAG show --json $PLAN | convert_report > $JSON_PLAN_FILE
   artifacts:
     paths:
-      - $PLAN
+      - $ENV_TAG/$PLAN
     reports:
-      terraform: $JSON_PLAN_FILE
+      terraform: $ENV_TAG/$JSON_PLAN_FILE
   rules:
-    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $ENV_TAG =~ /DIT/ && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
 
 # Separate apply job for manual launching Terraform as it can be destructive
 # action.
@@ -56,23 +72,23 @@ apply:
   environment:
     name: production
   script:
-    - terraform apply -input=false -auto-approve $DESTROY $PLAN
+    - terraform -chdir=$ENV_TAG apply -input=false -auto-approve $DESTROY $PLAN
   dependencies:
     - plan
   rules:
-    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $ENV_TAG =~ /DIT/ && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   artifacts:
     name: terraform-state-$CI_JOB_ID
     paths:
-      - terraform.tfstate
-      - .terraform.lock.hcl
+      - $ENV_TAG/terraform.tfstate
+      - $ENV_TAG/.terraform.lock.hcl
 
 state:
   stage: commit
   needs:
     - job: apply
   rules:
-    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $ENV_TAG =~ /DIT/ && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   before_script:
     - echo start git commit state changes
   script:
@@ -81,5 +97,5 @@ state:
     - git checkout $CI_COMMIT_BRANCH
     - git config -l
     - git diff -b
-    - git commit terraform.tfstate -m "Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME" || true
+    - git commit $ENV_TAG/terraform.tfstate -m "Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME" || true
     - git push https://WRITE_GIT_TOKEN:${WRITE_GIT_TOKEN}@git.epam.com/ethan_li/aws-terraform-freetier.git $CI_COMMIT_BRANCH

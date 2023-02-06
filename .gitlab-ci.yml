@@ -35,10 +35,10 @@ validate:
   script:
     - terraform validate
 
-plan:
-  stage: build
-  script:
-    - terraform plan -out=$PLAN
+#plan:
+#  stage: build
+#  script:
+#    - terraform plan -out=$PLAN
     - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
 #  artifacts:
 #    paths:
@@ -56,9 +56,9 @@ apply:
     - terraform apply -input=false -auto-approve
   dependencies:
     - plan
-  when: manual
-  only:
-    - dev
+#  when: manual
+#  only:
+#    - dev
   artifacts:
     name: Terraform-State
     paths:

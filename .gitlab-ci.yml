@@ -59,10 +59,10 @@ apply:
   when: manual
 #  only:
 #    - dev
-  artifacts:
-    name: Terraform-State
-    paths:
-      - terraform.tfstate
-      - terraform.ftstate.backup
-    exclude:
-      - .terraform/**/*.exe
+#  artifacts:
+#    name: Terraform-State
+#    paths:
+#      - terraform.tfstate
+#      - terraform.ftstate.backup
+#    exclude:
+#      - .terraform/**/*.exe

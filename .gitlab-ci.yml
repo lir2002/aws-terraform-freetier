@@ -36,11 +36,10 @@ checkEnv:
   stage: recognize
   before_script: []
   script:
-    - export EVN_TAG=DIT
-    - if [ $CI_COMMIT_REF_NAME = "develop" ] ;then ENV_TAG=SIT; fi
-    - if [[ $CI_COMMIT_REF_NAME ==  "release"* ]]; then ENV_TAG=UAT; fi
-    - if [ $CI_COMMIT_REF_NAME = "master" ]; then ENV_TAG=PROD; fi
-    - echo "ENV_TAG=$EVN_TAG" > build.env
+    - echo "ENV_TAG=DIT" > build.env
+    - if [[ $CI_COMMIT_REF_NAME == "develop" ]] ;then echo "ENV_TAG=SIT" > build.env; fi
+    - if [[ $CI_COMMIT_REF_NAME ==  "release"* ]]; then echo "ENV_TAG=UAT" > build.env; fi
+    - if [ $CI_COMMIT_REF_NAME = "master" ]; then echo "ENV_TAG=PROD" > build.env ; fi
   artifacts:
     reports:
       dotenv: build.env

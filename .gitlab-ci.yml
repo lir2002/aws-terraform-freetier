@@ -35,11 +35,11 @@ validate:
   script:
     - terraform validate
 
-#plan:
-#  stage: build
-#  script:
-#    - terraform plan -out=$PLAN
-    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
+plan:
+  stage: build
+  script:
+    - terraform plan -out=$PLAN
+    - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
 #  artifacts:
 #    paths:
 #      - $PLAN

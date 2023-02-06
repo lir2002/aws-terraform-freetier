@@ -32,11 +32,13 @@ stages:
 
 validate:
   stage: validate
+  when: on_failure
   script:
     - terraform validate
 
 plan:
   stage: build
+  when: on_failure
   script:
     - terraform plan -out=$PLAN
     - terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE
@@ -54,11 +56,14 @@ apply:
     name: production
   script:
     - terraform apply -input=false -auto-approve $DESTROY
-    - git commit terraform.tfstate -m 'Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME'
+    - git config user.email "$GITLAB_USER_EMAIL"
+    - git config user.name "$GITLAB_USER_NAME"
+    - git config -l
+    - git commit terraform.tfstate -m "Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME"
     - git push origin $CI_COMMIT_BRANCH
   dependencies:
     - plan
-  when: manual
+#  when: manual
 #  only:
 #    - dev
 #  artifacts:

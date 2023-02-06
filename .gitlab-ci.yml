@@ -58,9 +58,11 @@ apply:
     - terraform apply -input=false -auto-approve $DESTROY
     - git config user.email "$GITLAB_USER_EMAIL"
     - git config user.name "$GITLAB_USER_NAME"
+    - git diff -b
+    - git checkout $CI_COMMIT_BRANCH
     - git config -l
-    - git commit terraform.tfstate -m "Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME"
-    - git push origin $CI_COMMIT_BRANCH
+    - git commit terraform.tfstate -m "Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME" || true
+    - git push https://WRITE_GIT_TOKEN:${WRITE_GIT_TOKEN}@git.epam.com/ethan_li/aws-terraform-freetier.git $CI_COMMIT_BRANCH
   dependencies:
     - plan
 #  when: manual

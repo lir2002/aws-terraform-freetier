@@ -63,10 +63,8 @@ apply:
     - git push https://WRITE_GIT_TOKEN:${WRITE_GIT_TOKEN}@git.epam.com/ethan_li/aws-terraform-freetier.git $CI_COMMIT_BRANCH
   dependencies:
     - plan
-  when: manual
-  only:
-    variables:
-      - $GITLAB_USER_NAME != "WRITE_GIT_TOKEN"
+  rules:
+    - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   artifacts:
     name: Terraform-State
     paths:

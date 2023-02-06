@@ -31,4 +31,6 @@ resource "aws_instance" "app_server" {
   vpc_security_group_ids = ["sg-0ef47b71cfc237432"]
 
   subnet_id = "subnet-0a7a150f50e916932"
+
+  private_ip = "172.31.2.6"
 }

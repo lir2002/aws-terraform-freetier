@@ -60,7 +60,7 @@ apply:
   rules:
     - if: $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   artifacts:
-    name: Terraform-State
+    name: terraform-state-$CI_JOB_ID
     paths:
       - terraform.tfstate
       - .terraform.lock.hcl

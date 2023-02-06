@@ -54,8 +54,8 @@ apply:
     name: production
   script:
     - terraform apply -input=false -auto-approve
-  dependencies:
-    - plan
+#  dependencies:
+#    - plan
 #  when: manual
 #  only:
 #    - dev

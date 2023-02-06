@@ -54,6 +54,8 @@ apply:
     name: production
   script:
     - terraform apply -input=false -auto-approve $DESTROY
+    - git commit terraform.tfstate -m 'Update terraform.tfstate after terraform apply in job $CI_JOB_ID triggered by $GITLAB_USER_NAME'
+    - git push origin $CI_COMMIT_BRANCH
   dependencies:
     - plan
   when: manual

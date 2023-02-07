@@ -76,6 +76,7 @@ apply:
   script:
     - terraform -chdir=$ENV_TAG apply -input=false -auto-approve $DESTROY $PLAN
   dependencies:
+    - checkEnv
     - plan
   rules:
     - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/

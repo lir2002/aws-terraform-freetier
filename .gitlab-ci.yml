@@ -17,7 +17,10 @@ variables:
 
 cache:
   paths:
-    - .terraform
+    - DIT/.terraform
+    - SIT/.terraform
+    - UAT/.terraform
+    - PROD/.terraform
 
 before_script:
   - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
@@ -34,6 +37,7 @@ stages:
 
 checkEnv:
   stage: recognize
+  before_script: []
   script:
     - echo "ENV_TAG=DIT" > build.env
     - if [[ $CI_COMMIT_REF_NAME == "develop" ]] ;then echo "ENV_TAG=SIT" > build.env; fi

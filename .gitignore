@@ -2,6 +2,6 @@
 
 .terraform/
 
-SIT/terraform.tfstate.backup
+*/terraform.tfstate.backup
 
-SIT/PLAN.tfplan
+*/PLAN.tfplan

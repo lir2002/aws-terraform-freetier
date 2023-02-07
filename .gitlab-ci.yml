@@ -90,6 +90,7 @@ state:
   stage: commit
   needs:
     - job: apply
+    - job: checkEnv
   rules:
     - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
   before_script:

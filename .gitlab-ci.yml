@@ -52,7 +52,7 @@ validate:
   script:
     - terraform -chdir=$ENV_TAG validate
   rules:
-    - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/
 
 plan:
   stage: build
@@ -65,7 +65,7 @@ plan:
     reports:
       terraform: $ENV_TAG/$JSON_PLAN_FILE
   rules:
-    - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/
 
 # Separate apply job for manual launching Terraform as it can be destructive
 # action.
@@ -79,7 +79,7 @@ apply:
     - checkEnv
     - plan
   rules:
-    - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/
   artifacts:
     name: terraform-state-$CI_JOB_ID
     paths:
@@ -92,12 +92,12 @@ state:
     - job: apply
     - job: checkEnv
   rules:
-    - if: $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_AUTHOR !~ /WRITE_GIT_TOKEN/
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/
   before_script:
     - echo start git commit state changes
   script:
-    - git config user.email "$GITLAB_USER_EMAIL"
-    - git config user.name "$GITLAB_USER_NAME"
+    - git config user.email "project163343_bot@noreply.git.epam.com"
+    - git config user.name "WRITE_GIT_TOKEN"
     - git checkout $CI_COMMIT_BRANCH
     - git config -l
     - git diff -b

@@ -74,7 +74,7 @@ apply:
   environment:
     name: production
   script:
-    - if [[ $CI_COMMIT_REF_NAME == "master" && "a$DEPLOY_PRODUCTION_SECRET" != "a" && "a$DEPLOY_PRODUCTION_SECRET" != "a$DEPLOY_SECRET" ]]; then exit 1; fi
+    - if [[ $CI_COMMIT_REF_NAME == "master" && ( "a$DEPLOY_PRODUCTION_SECRET" == "a" || "a$DEPLOY_PRODUCTION_SECRET" != "a$DEPLOY_SECRET" ) ]]; then echo "[ERROR] Value of DEPLOY_PRODUCTION_SECRET and DEPLOY_SECRET do NOT match, or either is empty"; exit 1; fi
     - terraform -chdir=$ENV_TAG apply -input=false $DESTROY $PLAN
   dependencies:
     - checkEnv

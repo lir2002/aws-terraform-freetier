@@ -74,12 +74,14 @@ apply:
   environment:
     name: production
   script:
-    - terraform -chdir=$ENV_TAG apply -input=false -auto-approve $DESTROY $PLAN
+    - terraform -chdir=$ENV_TAG apply -input=false $DESTROY $PLAN
   dependencies:
     - checkEnv
     - plan
   rules:
-    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/ && $CI_COMMIT_REF_NAME != "master"
+    - if: $CI_COMMIT_REF_PROTECTED == "true" && $GITLAB_USER_NAME !~ /WRITE_GIT_TOKEN/ && $CI_COMMIT_REF_NAME == "master"
+      when: manual
   artifacts:
     name: terraform-state-$CI_JOB_ID
     paths:

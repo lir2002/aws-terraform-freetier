@@ -74,7 +74,7 @@ apply:
   environment:
     name: production
   script:
-    - terraform -chdir=$ENV_TAG apply -input=false -auto-approve $DESTROY $PLAN
+    - terraform -chdir=$ENV_TAG apply -input=false $DESTROY $PLAN
   dependencies:
     - checkEnv
     - plan

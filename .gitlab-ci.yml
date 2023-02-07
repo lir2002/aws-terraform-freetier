@@ -34,7 +34,6 @@ stages:
 
 checkEnv:
   stage: recognize
-  before_script: []
   script:
     - echo "ENV_TAG=DIT" > build.env
     - if [[ $CI_COMMIT_REF_NAME == "develop" ]] ;then echo "ENV_TAG=SIT" > build.env; fi
